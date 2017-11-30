@@ -24,7 +24,7 @@ LIBSPECTRA = -I/media/xuejian/WORK/spectra/spectra-0.5.0/include/ -I/media/xueji
 obj=main.o Sub.o SingleSub.o QWave.o Super.o DMRG.o
 main:$(obj)
 	$(CCCOM) -o main $(obj)  $(LIBSPECTRA)
-main.o:main.cpp  test.h
+main.o:main.cpp  DMRG.h Calcu.h
 	$(CCCOM) -c main.cpp $(LIBSPECTRA)
 Sub.o:Sub.cpp Sub.h Parameter.h
 	$(CCCOM) -c Sub.cpp -O2 $(LIBSPECTRA)

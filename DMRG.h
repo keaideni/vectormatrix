@@ -6,18 +6,25 @@
 
 class DMRG
 {
-public:
+        MatrixXd IniWave;
         Sub Sys;
         Sub Env;
         Sub m;
         Sub n;
+        
+        ofstream SaveAll;
+        double _FEnergy;
+        double _Entropy;
+public:
+        const double& FEnergy()const{return _FEnergy;};
+        const double& Entropy()const{return _Entropy;};
+        
 
 
         DMRG(){};
         ~DMRG(){};
 
         DMRG(Parameter& para);
-        MatrixXd IniWave;
 
         void Initialize(const int& dir, const int& Gdir, const int& OS, const int& OE);
 

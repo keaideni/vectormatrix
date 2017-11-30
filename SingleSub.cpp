@@ -44,6 +44,9 @@ _SysAdag(para.nmax()*2, para.nmax()*2)
         Kron(_SysA, tempA, Sigmaeye);Kron(_SysAdag, tempAdag, Sigmaeye);
 
         Kron(_System, tempAdag*tempA, Sigmaeye);
+        //test=================================
+        //_System*=-1;
+        //=====================================
 
         SpMat temp;
         Kron(temp, tempEye, Sigmaplu*Sigmamin); _System+=temp;

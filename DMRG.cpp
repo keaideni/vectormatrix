@@ -58,28 +58,38 @@ DMRG::DMRG(Parameter& para):
 Sys(para, 1),
 Env(para, para.LatticeSize()),
 m(para, 2),
-n(para, para.LatticeSize()-1)
+n(para, para.LatticeSize()-1),
+SaveAll("./result/SaveAll"),
+_FEnergy(0),
+_Entropy(0)
 {
+        SaveAll.precision(15);
         Sys.Save(); Env.Save();
 
         int OS(1), OE(para.LatticeSize());
 
-        cout<<"===================The growth process:==================="<<endl;
+        //cout<<"===================The growth process:==================="<<endl;
+        SaveAll<<"===================The growth process:==================="<<endl;
         Parameter paraup;
         paraup.ChangeD(20);
         BuildUp(paraup, OS, OE);
-        cout<<"===================The sweep process:==================="<<endl;
+        //cout<<"===================The sweep process:==================="<<endl;
+        SaveAll<<"===================The sweep process:==================="<<endl;
+
 
         //para.ChangeD(200);
         OS-=1;OE+=1;//This one for the IniWave works.
         Sweep(para, OS, OE);
 
-        cout<<"===================The sweep process finished!================="<<endl;
+        //cout<<"===================The sweep process finished!================="<<endl;
+        SaveAll<<"===================The sweep process finished!================="<<endl;
+
 
 
 
 
         //OneSiteSweep(para, OS, OE);
+        SaveAll.close();
 
 
 
@@ -109,6 +119,8 @@ void DMRG::BuildUp(Parameter& para, int& OS, int& OE)
                 cout.precision(15);
                 cout<<"OS="<<setw(10)<<OS<<"; OE="<<setw(10)<<OE<<"; The energy="
                 <<setw(18)<<para.Energy<<endl;
+                SaveAll<<"OS="<<setw(10)<<OS<<"; OE="<<setw(10)<<OE<<"; The energy="
+                <<setw(18)<<para.Energy<<endl;
                 //int nn; cin>>nn;
 
                 MatrixXd wave;
@@ -116,8 +128,8 @@ void DMRG::BuildUp(Parameter& para, int& OS, int& OE)
                 Supp.wave.SMEN(wave);
                 
                 
-                MatrixXd MatrixU(TruncL(wave, para.D()));
-                MatrixXd MatrixV(TruncR(wave, para.D()));
+                MatrixXd MatrixU(DenTruncL(wave, para.D()));
+                MatrixXd MatrixV(DenTruncR(wave, para.D()));
 
 
                 Sub SysNew(para, Sys, m, OS+1);
@@ -149,7 +161,7 @@ void DMRG::Sweep(Parameter& para, int& OS, int& OE)
         int dir(1);//for the Sub lattice growth. 1 means the System grows and -1 means the Environment.
         int Gdir(-1);//for the grow direction, -1 means left, 1 means right.
 
-        double menergy(0);
+        //double menergy(0);
         double err(1);
         int SweepNo(1);
         bool stop(false);
@@ -171,13 +183,14 @@ void DMRG::Sweep(Parameter& para, int& OS, int& OE)
 
                 if((OS==(para.LatticeSize()/2)&dir==1)|(OE==(para.LatticeSize()/2+1)&dir==-1))
                 {
-                        err=abs(para.Energy-menergy);cout<<err<<endl;
-                        menergy=para.Energy;
+                        err=abs(para.Energy-_FEnergy);SaveAll<<err<<endl;
+                        _FEnergy=para.Energy;
                         Gdir*=-1;
                         stop=(err<1e-6);
 
                         if(!stop)
-                        cout<<"==========the "<<SweepNo++<<"th sweeps=============="<<endl;
+                        SaveAll<<"==========the "<<SweepNo++<<"th sweeps=============="<<endl;
+                        //cout<<"==========the "<<SweepNo++<<"th sweeps=============="<<endl;
                         if(SweepNo==2)Gdir=-1;
                         
                 }
@@ -200,30 +213,36 @@ void DMRG::Sweep(Parameter& para, int& OS, int& OE)
 void DMRG::CalcuEnergy(Parameter& para, int& OS, int& OE, const int& dir, const int& Gdir)
 {
         
-        time_t start=0, end=0;
+        
 
+        time_t start, end;
         
         
         
-        time(&start);
         Super Sup(para, Sys, Env);
-        time(&end);
-        cout<<"The process of constructing Super takes "<<(end-start)<<"s."<<endl;
+        
+        //cout<<"The process of constructing Super takes "<<(end-start)<<"s."<<endl;
+        //SaveAll<<"The process of constructing Super takes "<<(end-start)<<"s."<<endl;
         
 
-        time(&start);
-        //{
-                //SuperEnergy Supp(para, Sup);
-        //}
+        //time(&start);
         SuperEnergy Supp(para, Sup, IniWave);
-        time(&end);
-        cout<<"The process of getting eigenstate takes "<<(end-start)<<"s."<<endl;
+        //time(&end);
+        //cout<<"The process of getting eigenstate takes "<<(end-start)<<"s."<<endl;
+        //==============to save the final wave=======================
+        if((OS==(para.LatticeSize()/2)&dir==1)|(OE==(para.LatticeSize()/2+1)&dir==-1))
+        {
+                MatrixXd finalwave;
+                Supp.wave.SMEN(finalwave);
+                SaveTruncM(finalwave, 10000);//The file "/Trunc/10000" is the final wave.
+        }
 
 
 
-
-        cout.precision(15);
-        cout<<"OS="<<setw(10)<<OS<<"; OE="<<setw(10)<<OE<<"; The energy="
+        //cout.precision(15);
+        //cout<<"OS="<<setw(10)<<OS<<"; OE="<<setw(10)<<OE<<"; The energy="
+        //<<setw(18)<<para.Energy<<endl;
+        SaveAll<<"OS="<<setw(10)<<OS<<"; OE="<<setw(10)<<OE<<"; The energy="
         <<setw(18)<<para.Energy<<endl;
 
         MatrixXd wave;
@@ -232,22 +251,22 @@ void DMRG::CalcuEnergy(Parameter& para, int& OS, int& OE, const int& dir, const 
         {
                 if(dir==1)
                 {
-                        time(&start);
+                        
                         Sub SysNew(para, Sys, m, OS+dir);
-                        time(&end);
+                        
                         Supp.wave.SMEN(wave);
-                        MatrixXd matrixT=(TruncL(wave, para.D()));
+                        MatrixXd matrixT=(DenTruncL(wave, para.D()));
                         SysNew.Trunc(matrixT);
                         SysNew.Save();
                         SaveTruncM(matrixT, SysNew.Orbital());
                         IniWave=matrixT.adjoint()*wave;
                 }else
                 {
-                        time(&start);
+                        
                         Sub SysNew(para, Env, n, OE+dir);
-                        time(&end);
+                        
                         Supp.wave.SMEN(wave);
-                        MatrixXd matrixT=(TruncR(wave, para.D()));
+                        MatrixXd matrixT=(DenTruncR(wave, para.D()));
                         SysNew.Trunc(matrixT);
                         SysNew.Save();
                         SaveTruncM(matrixT, SysNew.Orbital());
@@ -258,11 +277,11 @@ void DMRG::CalcuEnergy(Parameter& para, int& OS, int& OE, const int& dir, const 
                 
                 if(dir==1)
                 {
-                        time(&start);
+                        
                         Sub SysNew(para, n, Sys, OS+dir);
-                        time(&end);
+                        
                         Supp.wave.NSME(wave);
-                        MatrixXd matrixT=(TruncL(wave, para.D()));
+                        MatrixXd matrixT=(DenTruncL(wave, para.D()));
                         //cout<<matrixT.rows()<<"x"<<matrixT.cols()<<endl;
                         //int nn; cin>>nn;
                         SysNew.Trunc(matrixT);
@@ -271,11 +290,11 @@ void DMRG::CalcuEnergy(Parameter& para, int& OS, int& OE, const int& dir, const 
                         IniWave=matrixT.adjoint()*wave;
                 }else
                 {
-                        time(&start);
+                        
                         Sub SysNew(para, m, Env, OE+dir);
-                        time(&end);
+                        
                         Supp.wave.NSME(wave);
-                        MatrixXd matrixT=(TruncR(wave, para.D()));
+                        MatrixXd matrixT=(DenTruncR(wave, para.D()));
                         SysNew.Trunc(matrixT);
                         SysNew.Save();
                         SaveTruncM(matrixT, SysNew.Orbital());

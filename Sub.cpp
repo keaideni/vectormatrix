@@ -70,7 +70,11 @@ _SysEye(MatrixXd::Identity((nmax+1)*2,(nmax+1)*2))
         Kron(_SysAdag, adag, sigmaeye);
         _SysA1=_SysA;_SysAdag1=_SysAdag;
 
-        Kron(_System, adag*a, sigmaeye);MatrixXd temp;
+        Kron(_System, adag*a, sigmaeye);
+        //test===========================
+        //_System*=-1;
+        //===============================
+        MatrixXd temp;
         Kron(temp, eye, sigmaplu*sigmamin); _System+=temp;
         Kron(temp, adag, sigmamin);temp*=para.gr(); _System+=temp;
         Kron(temp, a, sigmaplu);temp*=para.gr(); _System+=temp;
