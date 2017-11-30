@@ -1,35 +1,59 @@
-#include "SuperEnergy.h"
+#ifndef TEST_H
+#define TEST_H
+#include "QWave.h"
 #include "SingleSub.h"
+#include "DMRG.h"
 #include <ctime>
+const MatrixXd TruncL(const MatrixXd& _Wave, const int& D);
+const MatrixXd TruncR(const MatrixXd& _Wave, const int& D);
 
+void SaveTruncM(const MatrixXd& A, const int& logo);
+void ReadTruncM(MatrixXd& A, const int& logo);
 void test(Parameter& para);
 
 void test(Parameter& para)
 {
         
-        MatrixXd System(MatrixXd::Random(1000, 1000));
+        /*SingleSub m(para);
+        Sub Sys(para, 1);
+        //MatrixXd System;
+        MatrixXd IniWave;
 
-        SingleSub m(para), n(para);
+        //ReadTruncM(System, 1002);
+        ReadTruncM(IniWave, 1003);
+        
+        
 
-        //Sys.Read(11);Env.Read(14);
+        Super Sup(para, Sys, Sys);
 
-        QWave wave1(1000, m.System().rows(),
-         n.System().rows(), 1000);
+        vector<double> f;
+        for(int i=0; i<100; ++i)
+        {
+            for(int j=0; j<100; ++j)f.push_back(IniWave(i,j));
+        }
+        Sup._Wave.f2Wave(f);
+        
+        Sup.OneIteration();
+        Sup.Wave().SMEN(IniWave);
+        
+        SaveTruncM(IniWave, 1000);*/
+        
+        MatrixXd A, B;
+        ReadTruncM(A, 1000);ReadTruncM(B, 1001);
+        double sum(0);
+        for(int i=0; i<B.rows(); ++i)
+        {
+            for(int j=0; j<B.cols(); ++j)
+            {
+                cout<<A(i,j)<<"\t"<<B(i,j)<<"\t"<<
+                abs(A(i,j)-B(i,j))<<endl;
+                sum+=abs(A(i,j)-B(i,j));
+            }
+        }cout<<sum<<endl;//<<A.transpose()*B<<endl;;
 
-        //QWave wave2(wave1);
-
-        time_t start, end;
-        time(&start);
-        wave1.EnvOPWave(System);//cout<<wave1.Wave()(437,500)<<endl;
-        time(&end);cout<<end-start<<endl;
-
-        time(&start);
-        wave1.MOPWave(m.System());//cout<<wave1.Wave()(437,500)<<endl;
-        time(&end);cout<<end-start<<endl;
-
-        time(&start);
-        wave1.NOPWave(n.System());//cout<<wave1.Wave()(437,500)<<endl;
-        time(&end);cout<<end-start<<endl;
+        
         
 
 }
+
+#endif // TEST_H

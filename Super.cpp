@@ -1,5 +1,5 @@
 #include "Super.h"
-
+void SaveTruncM(const MatrixXd&, const int&);
 void Super::f1tof2(const vector<double>& f, vector<double>& g)
 {
         _Wave.f2Wave(f);
@@ -9,126 +9,80 @@ void Super::f1tof2(const vector<double>& f, vector<double>& g)
 
 void Super::OneIteration()
 {
-        QWave temp(_Wave);
+        
+
+
+        QWave temp(_Wave);//_Wave.Show();int nn; cin>>nn;
         _Wave.SysOPWave(Sys.System());
 
-        QWave temp1(temp);
-        temp1.EnvOPWave(Env.System());
-        _Wave.add(temp1);
+        /*MatrixXd temp1;
+        _Wave.SMEN(temp1);
+        cout<<temp1<<endl;
+        int nn;cin>>nn;*/
+        
+        _Wave.EnvOPWave(Env.System(), temp);
+        
 
-        temp1=temp;
-        temp1.MOPWave(m.System());
-        _Wave.add(temp1);
+        
+        _Wave.MOPWave(m.System(), temp);
+       
 
-        temp1=temp;
-        temp1.NOPWave(n.System());
-        _Wave.add(temp1);
-
+        
+        _Wave.NOPWave(n.System(), temp);
 
 //==========Sys-m=====================
-        temp1=temp;
-        temp1.SysOPWave(Sys.SysA());
-        temp1.MOPWave(m.SysAdag());
-        temp1.time(-1*Jr);
-        _Wave.add(temp1);
 
-        temp1=temp;
-        temp1.SysOPWave(Sys.SysAdag());
-        temp1.MOPWave(m.SysA());
-        temp1.time(-1*Jr);
-        _Wave.add(temp1);
+        _Wave.SysOPWave(Sys.SysA(), temp.MOPWave(m.SysAdag(), -1*Jr));
 
-        temp1=temp;
-        temp1.SysOPWave(Sys.SysAdag());
-        temp1.MOPWave(m.SysAdag());
-        temp1.time(-1*Jcr);
-        _Wave.add(temp1);
+        _Wave.SysOPWave(Sys.SysAdag(), temp.MOPWave(m.SysA(), -1*Jr));
 
-        temp1=temp;
-        temp1.SysOPWave(Sys.SysA());
-        temp1.MOPWave(m.SysA());
-        temp1.time(-1*Jcr);
-        _Wave.add(temp1);
+        _Wave.SysOPWave(Sys.SysAdag(), temp.MOPWave(m.SysAdag(), -1*Jcr));
+
+        _Wave.SysOPWave(Sys.SysA(), temp.MOPWave(m.SysA(), -1*Jcr));
+        //cout<<"2"<<endl;
 
 //=================m-Env=====================
-        temp1=temp;
-        temp1.EnvOPWave(Env.SysA1());
-        temp1.MOPWave(m.SysAdag());
-        temp1.time(-1*Jr);
-        _Wave.add(temp1);
 
-        temp1=temp;
-        temp1.EnvOPWave(Env.SysAdag1());
-        temp1.MOPWave(m.SysA());
-        temp1.time(-1*Jr);
-        _Wave.add(temp1);
+        _Wave.EnvOPWave(Env.SysA1(), temp.MOPWave(m.SysAdag(), -1*Jr));
 
-        temp1=temp;
-        temp1.EnvOPWave(Env.SysAdag1());
-        temp1.MOPWave(m.SysAdag());
-        temp1.time(-1*Jcr);
-        _Wave.add(temp1);
+        _Wave.EnvOPWave(Env.SysAdag1(), temp.MOPWave(m.SysA(), -1*Jr));
 
-        temp1=temp;
-        temp1.EnvOPWave(Env.SysA1());
-        temp1.MOPWave(m.SysA());
-        temp1.time(-1*Jcr);
-        _Wave.add(temp1);
+        _Wave.EnvOPWave(Env.SysAdag1(), temp.MOPWave(m.SysAdag(), -1*Jcr));
+
+        _Wave.EnvOPWave(Env.SysA1(), temp.MOPWave(m.SysA(), -1*Jcr));
+        //cout<<"3"<<endl;
 
 //====================Env-n==============================
-        temp1=temp;
-        temp1.EnvOPWave(Env.SysA());
-        temp1.NOPWave(n.SysAdag());
-        temp1.time(-1*Jr);
-        _Wave.add(temp1);
 
-        temp1=temp;
-        temp1.EnvOPWave(Env.SysAdag());
-        temp1.NOPWave(n.SysA());
-        temp1.time(-1*Jr);
-        _Wave.add(temp1);
+        _Wave.EnvOPWave(Env.SysA(), temp.NOPWave(n.SysAdag(), -1*Jr));
 
-        temp1=temp;
-        temp1.EnvOPWave(Env.SysAdag());
-        temp1.NOPWave(n.SysAdag());
-        temp1.time(-1*Jcr);
-        _Wave.add(temp1);
+        _Wave.EnvOPWave(Env.SysAdag(), temp.NOPWave(n.SysA(), -1*Jr));
 
-        temp1=temp;
-        temp1.EnvOPWave(Env.SysA());
-        temp1.NOPWave(n.SysA());
-        temp1.time(-1*Jcr);
-        _Wave.add(temp1);
+        _Wave.EnvOPWave(Env.SysAdag(), temp.NOPWave(n.SysAdag(), -1*Jcr));
+
+        _Wave.EnvOPWave(Env.SysA(), temp.NOPWave(n.SysA(), -1*Jcr));
+        //cout<<"4"<<endl;
 
 //=============for the periodic bound condition=====================
         //===========n-Sys=====================
-        temp1=temp;
-        temp1.SysOPWave(Sys.SysA1());
-        temp1.NOPWave(n.SysAdag());
-        temp1.time(-1*Jr);
-        _Wave.add(temp1);
 
-        temp1=temp;
-        temp1.SysOPWave(Sys.SysAdag1());
-        temp1.NOPWave(n.SysA());
-        temp1.time(-1*Jr);
-        _Wave.add(temp1);
+        _Wave.SysOPWave(Sys.SysA1(), temp.NOPWave(n.SysAdag(), -1*Jr));
 
-        temp1=temp;
-        temp1.SysOPWave(Sys.SysAdag1());
-        temp1.NOPWave(n.SysAdag());
-        temp1.time(-1*Jcr);
-        _Wave.add(temp1);
+        _Wave.SysOPWave(Sys.SysAdag1(), temp.NOPWave(n.SysA(), -1*Jr));
 
-        temp1=temp;
-        temp1.SysOPWave(Sys.SysA1());
-        temp1.NOPWave(n.SysA());
-        temp1.time(-1*Jcr);
-        _Wave.add(temp1);
+        _Wave.SysOPWave(Sys.SysAdag1(), temp.NOPWave(n.SysAdag(), -1*Jcr));
+
+        _Wave.SysOPWave(Sys.SysA1(), temp.NOPWave(n.SysA(), -1*Jcr));
 
 
+//==================================
 
-        
+        //MatrixXd wave;
+        //_Wave.SMEN(wave);
+        //SaveTruncM(wave, 1000);
+        //exit(true);
+//==================================
+
 }
 
 

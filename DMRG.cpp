@@ -1,4 +1,5 @@
 #include "DMRG.h"
+#include "Trunc.h"
 
 #include <iomanip>
 #include <ctime>
@@ -14,7 +15,7 @@ void SaveTruncM(const MatrixXd& A, const int& logo)
 
         ofstream outfile(filename);
         outfile<<A.rows()<<endl<<A.cols()<<endl;
-        outfile.precision(15);
+        outfile.precision(20);
         outfile<<A<<endl;
         
         outfile.close();
@@ -94,37 +95,47 @@ void DMRG::BuildUp(Parameter& para, int& OS, int& OE)
         while(OE-OS>1)
         {
 
-                Sys.Read(OS);
+                Sys.Read(OS);Env.Read(OE);//if(OS==2)Sys.Show();
                 //Env.read(OE);
 
                 //Sub SysNew(para, Sys, m, OS+1);
+                
+                
 
-                Super Sup(para, Sys, Sys);
+                Super Sup(para, Sys, Env);
                 SuperEnergy Supp(para, Sup);
+
 
                 cout.precision(15);
                 cout<<"OS="<<setw(10)<<OS<<"; OE="<<setw(10)<<OE<<"; The energy="
                 <<setw(18)<<para.Energy<<endl;
+                //int nn; cin>>nn;
 
-                MatrixXd MatrixU;
+                MatrixXd wave;
 
-                Supp.wave.TruncL(MatrixU, para.D());
+                Supp.wave.SMEN(wave);
+                
+                
+                MatrixXd MatrixU(TruncL(wave, para.D()));
+                MatrixXd MatrixV(TruncR(wave, para.D()));
+
 
                 Sub SysNew(para, Sys, m, OS+1);
                 SysNew.Trunc(MatrixU);
                 SysNew.Save();
                 SaveTruncM(MatrixU, SysNew.Orbital());
 
-                SysNew.ChangeOrbital(OE-1);
-                SysNew.Save();
-                SaveTruncM(MatrixU, SysNew.Orbital());
+                Sub EnvNew(para, Env, n, OE-1);
+                EnvNew.Trunc(MatrixV);
+                EnvNew.Save();
+                SaveTruncM(MatrixV, Env.Orbital());
 
                 m.ChangeOrbital(m.Orbital()+1);
                 n.ChangeOrbital(n.Orbital()-1);
                 OS+=1;
                 OE-=1;
 
-                if(OE-OS==1)IniWave=Supp.wave.Wave();
+                if(OE-OS==1)Supp.wave.SMEN(IniWave);
 
         }
 
@@ -158,7 +169,7 @@ void DMRG::Sweep(Parameter& para, int& OS, int& OE)
                 OE+=dir;
 
 
-                if((OS==(para.LatticeSize()/2)&dir==1)|OE==(para.LatticeSize()/2)&dir==-1)
+                if((OS==(para.LatticeSize()/2)&dir==1)|(OE==(para.LatticeSize()/2+1)&dir==-1))
                 {
                         err=abs(para.Energy-menergy);cout<<err<<endl;
                         menergy=para.Energy;
@@ -169,7 +180,8 @@ void DMRG::Sweep(Parameter& para, int& OS, int& OE)
                         cout<<"==========the "<<SweepNo++<<"th sweeps=============="<<endl;
                         if(SweepNo==2)Gdir=-1;
                         
-                }else if(OE==para.LatticeSize()|OS==1)
+                }
+                if(OE==para.LatticeSize()|OS==1)
                 {
                         dir*=-1;Gdir*=-1;
                 }
@@ -214,7 +226,7 @@ void DMRG::CalcuEnergy(Parameter& para, int& OS, int& OE, const int& dir, const 
         cout<<"OS="<<setw(10)<<OS<<"; OE="<<setw(10)<<OE<<"; The energy="
         <<setw(18)<<para.Energy<<endl;
 
-        MatrixXd matrixT;
+        MatrixXd wave;
 
         if(Gdir==1)
         {
@@ -223,45 +235,51 @@ void DMRG::CalcuEnergy(Parameter& para, int& OS, int& OE, const int& dir, const 
                         time(&start);
                         Sub SysNew(para, Sys, m, OS+dir);
                         time(&end);
-                        Supp.wave.TruncL(matrixT, para.D());
+                        Supp.wave.SMEN(wave);
+                        MatrixXd matrixT=(TruncL(wave, para.D()));
                         SysNew.Trunc(matrixT);
                         SysNew.Save();
                         SaveTruncM(matrixT, SysNew.Orbital());
-                        IniWave=matrixT.adjoint()*Supp.wave.Wave();
+                        IniWave=matrixT.adjoint()*wave;
                 }else
                 {
                         time(&start);
                         Sub SysNew(para, Env, n, OE+dir);
                         time(&end);
-                        Supp.wave.TruncR(matrixT, para.D());
+                        Supp.wave.SMEN(wave);
+                        MatrixXd matrixT=(TruncR(wave, para.D()));
                         SysNew.Trunc(matrixT);
                         SysNew.Save();
                         SaveTruncM(matrixT, SysNew.Orbital());
-                        IniWave=Supp.wave.Wave()*matrixT;
+                        IniWave=wave*matrixT;
                 }
         }else
         {
-                Supp.wave.Transform();
+                
                 if(dir==1)
                 {
                         time(&start);
                         Sub SysNew(para, n, Sys, OS+dir);
                         time(&end);
-                        Supp.wave.TruncL(matrixT, para.D());
+                        Supp.wave.NSME(wave);
+                        MatrixXd matrixT=(TruncL(wave, para.D()));
+                        //cout<<matrixT.rows()<<"x"<<matrixT.cols()<<endl;
+                        //int nn; cin>>nn;
                         SysNew.Trunc(matrixT);
                         SysNew.Save();
                         SaveTruncM(matrixT, SysNew.Orbital());
-                        IniWave=matrixT.adjoint()*Supp.wave.Wave();
+                        IniWave=matrixT.adjoint()*wave;
                 }else
                 {
                         time(&start);
                         Sub SysNew(para, m, Env, OE+dir);
                         time(&end);
-                        Supp.wave.TruncR(matrixT, para.D());
+                        Supp.wave.NSME(wave);
+                        MatrixXd matrixT=(TruncR(wave, para.D()));
                         SysNew.Trunc(matrixT);
                         SysNew.Save();
                         SaveTruncM(matrixT, SysNew.Orbital());
-                        IniWave=Supp.wave.Wave()*matrixT;
+                        IniWave=wave*matrixT;
                 }
         }
 
@@ -270,93 +288,7 @@ void DMRG::CalcuEnergy(Parameter& para, int& OS, int& OE, const int& dir, const 
 
 
 
-void DMRG::OneSiteSweep(Parameter& para, int& OS, int& OE)
-{
 
-        int dir(1);//for the Sub lattice growth. 1 means the System grows and -1 means the Environment.
-        int Gdir(-1);//for the grow direction, -1 means left, 1 means right.
-        OE-=dir;
-        double menergy(0);
-        double err(1);
-
-        while(err>0.0001)
-        {
-                Sys.Read(OS);Env.Read(OE);m.ChangeOrbital(OS+dir); n.ChangeOrbital(OE+dir);
-
-                Sub a;
-                Sub b;
-
-                if(Gdir==1&dir==1)
-                {
-                        Sub temp(para, Sys, m, OS+1);
-                        a=temp;
-                        b=Env;
-                }else if(Gdir==-1&dir==1)
-                {
-                        Sub temp(para, n, Sys, OS+1);
-                        a=temp;
-                        b=Env;
-                }else if(Gdir==1&dir==-1)
-                {
-                        a=Sys;
-                        Sub temp(para, Env, n, OE-1);
-                        b=temp;
-                }else
-                {
-                        a=Sys;
-                        Sub temp(para, m, Env, OE-1);
-                        b=temp;
-                }
-
-
-
-                Super Sup(para, a, b);
-                
-
-
-                SuperEnergy Supp(para, Sup);
-                cout.precision(15);
-                cout<<"OS="<<setw(10)<<OS<<"; OE="<<setw(10)<<OE<<"; The energy="
-                <<setw(18)<<para.Energy<<endl;
-
-                MatrixXd matrixT;
-
-                if(dir==1)
-                {
-                        Supp.wave.TruncL(matrixT, para.D());
-                        //Sub temp(*a);
-                        a.Trunc(matrixT);
-                        a.Save();
-
-                }else
-                {
-                        Supp.wave.TruncR(matrixT, para.D());
-                        b.Trunc(matrixT);
-                        b.Save();
-                }
-
-                OS+=dir;
-                OE+=dir;
-
-
-                if((OS==para.LatticeSize()/2&dir==1)|(OE==(para.LatticeSize()/2+1)&dir==-1))
-                {
-                        err=abs(para.Energy-menergy);
-                        menergy=para.Energy;
-                        Gdir*=-1;
-                
-
-
-                }else if(OE==para.LatticeSize()||OS==1)
-                {
-                        dir*=-1;Gdir*=-1;
-                }
-                
-
-                
-        }
-
-}
 
 void DMRG::Initialize(const int& dir, const int& Gdir, const int& OS, const int& OE)
 {

@@ -31,7 +31,7 @@ public:
         void CalcuEnergy(Parameter& para, int& OS,
          int& OE, const int& dir, const int& Gdir);
         //===========one site sweep===================
-        void OneSiteSweep(Parameter& para, int& OS, int& OE);
+        //void OneSiteSweep(Parameter& para, int& OS, int& OE);
         
         
         

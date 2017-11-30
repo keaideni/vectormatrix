@@ -4,26 +4,22 @@
 #include "Sub.h"
 #include "SingleSub.h"
 
+
 class QWave
 {
 private:
 
-        MatrixXd _Wave;//The Wave is Sm En initially.
+        vector<vector<MatrixXd>> _Wave;//<m<n,mat>>
         const int DSys, DEnv, Dm, Dn;
         //========================reshape===============================
-        void Wave2S(MatrixXd& A)const;//sm,en to s, men.
-        void S2Wave(const MatrixXd& A);
-        void Wave2M(MatrixXd& A)const;//sm,en to m, sen.
-        void M2Wave(const MatrixXd& A);
-        void Wave2E(MatrixXd& A)const;//sm,en to nsm, e.
-        void E2Wave(const MatrixXd& A);
-        void Wave2N(MatrixXd& A)const;//sm,en to esm, n.
-        void N2Wave(const MatrixXd& A);
+
+
 
 
 public:
 
-        const MatrixXd& Wave()const{return _Wave;};
+        const vector<vector<MatrixXd>>& Wave()const
+        {return _Wave;};
         //QWave(){};
         ~QWave(){};
         QWave(const QWave&a):
@@ -37,49 +33,71 @@ public:
         DSys(sys),
         DEnv(env),
         Dm(m),
-        Dn(n),
-        _Wave(MatrixXd::Zero(sys*m, env*n))
-        {};
+        Dn(n)
+        {
+                MatrixXd temp(MatrixXd::Zero(DSys, DEnv));
+                vector<MatrixXd> tempv;
+                for(int i=0; i<Dn; ++i)
+                {
+                        tempv.push_back(temp);
+                }
+                for(int i=0; i<Dm; ++i)
+                {
+                        _Wave.push_back(tempv);
+                }
+        };
 
-//=================================================================================
+        void SMEN2Wave(const MatrixXd& A);
+        void SMEN(MatrixXd& A)const;
+        void NSME(MatrixXd& A)const;
+        void TruncL(MatrixXd& truncU, const int& D)const;
 
-        //void SysOPWave(const MatrixXd&);
-        void SysOPWave(const MatrixXd&);//S*Wave;
-        void EnvOPWave(const MatrixXd&);//Wave*E^T
-        void MOPWave(const SpMat&);//M*Wave
-        void NOPWave(const SpMat&);//N*Wave
+//=====================================================
+        void SysOPWave(const MatrixXd& Sys);//Wave=Sys*Wave;
+        //_Wave+=Sys*wave;
+        void SysOPWave(const MatrixXd& Sys, const QWave& Wave);        
+        //_wave+=wave*Env.
+        void EnvOPWave(const MatrixXd& Env, const QWave& wave);
+        //_wave+=M*wave.
+        void MOPWave(const SpMat& M, const QWave& wave);
+        //M*_Wave;
+        const QWave MOPWave(const SpMat& M, const double&)const;
+        //_wave+=wave*N
+        void NOPWave(const SpMat& N, const QWave& wave);
+        //_Wave*N;
+        const QWave NOPWave(const SpMat& N, const double&)const;
+        void add(const QWave& wave);
+//=====================================================
 
-        void Transform();//Transform form SmEn into nSmE
-        void TransBack();//Transform form nSmE back SmEn
-//=================================================================================
-        const MatrixXd& LOPWave(const MatrixXd&);//wave=L*wave
-        const MatrixXd& ROPWave(const MatrixXd&);//wave=wave*R
-        const MatrixXd& LROPWave(const MatrixXd&, const MatrixXd&);//wave=L*wave*R
-//=================================================================================
-        void add(const QWave& a){_Wave+=a._Wave;};//wave+=a;
-        void time(const double& J){_Wave*=J;};
+        
 
 
-        const vector<double>& Wave2f(vector<double>& f)const;
-        const MatrixXd& f2Wave(const vector<double>& f);
-        const MatrixXd& f2Wave(const VectorXd& f);
+        void Wave2f(vector<double>& f)const;
+        void f2Wave(const vector<double>& f);
+        void f2Wave(const VectorXd& f);
 
         const QWave& operator=(const QWave& a)
         {
                 _Wave=a.Wave();
                 return *this;
         }
-
-
-        const MatrixXd& TruncL(MatrixXd& truncU, const int& D)const;
-        const MatrixXd& TruncR(MatrixXd& truncV, const int& D)const;
-
-
-
-
+        void Norm();
+        void Show()const;
+        /*void Random()
+        {
+                for(int im=0; im<Dm; ++im)
+                {
+                        for(int in=0; in<Dn; ++in)
+                        {
+                                _Wave.at(im).at(in)
+                                =MatrixXd::Random(DSys, DEnv);
+                        }
+                }
+        }*/
 
 
 };
+
 
 
 #endif // Q_WAVE_H

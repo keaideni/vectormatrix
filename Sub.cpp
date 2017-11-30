@@ -11,7 +11,7 @@ void Sub::MatrixSave(const MatrixXd& A, ofstream& outfile)const
 {
         outfile<<A.rows()<<endl
         <<A.cols()<<endl;
-        outfile.precision(15);
+        outfile.precision(20);
         outfile<<A<<endl;
 }
 
@@ -116,8 +116,12 @@ const Sub& Sub::operator=(const Sub& a)
 
 void Sub::Trunc(const MatrixXd& truncU)
 {
+        
+        //truncU.col(0)<<endl;
         _System=truncU.adjoint()*_System*truncU;
+        
         _SysA=truncU.adjoint()*_SysA*truncU;
+
         _SysAdag=truncU.adjoint()*_SysAdag*truncU;
         _SysEye=truncU.adjoint()*_SysEye*truncU;
         _SysA1=truncU.adjoint()*_SysA1*truncU;
@@ -172,7 +176,7 @@ void Sub::Show()const
 {
         cout<<"The site of Sub block is "<<_Orbital<<endl;
         cout<<"The System:"<<endl;
-        cout<<_System.rows()<<"X"<<_System.cols()<<endl;
+        cout<<_System<<endl;//.rows()<<"X"<<_System.cols()<<endl;
         cout<<"The SysA:"<<endl;
         cout<<_SysA.rows()<<"X"<<_SysA.cols()<<endl;
         cout<<"The SysAdag:"<<endl;

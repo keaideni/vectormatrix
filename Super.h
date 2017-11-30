@@ -12,11 +12,12 @@ private:
         
         const Sub& Sys;
         const Sub& Env;
-        const SingleSub m;
-        const SingleSub n;
+        SingleSub m;
+        SingleSub n;
 
-        QWave _Wave;
+        
 public:
+        QWave _Wave;
 
 
         int rows() { return Dim; };
@@ -35,9 +36,10 @@ public:
         Jcr(para.Jcr()),
         Sys(_Sys),
         Env(_Env),
-        _Wave(_Sys.SysEye().cols(),m.System().cols(),n.System().rows(), _Env.SysEye().rows())
+        _Wave(_Sys.SysEye().cols(),2*(para.nmax()+1),2*(para.nmax()+1), _Env.SysEye().rows()),
+        Dim(_Sys.SysEye().cols()*m.System().cols()*n.System().rows()*_Env.SysEye().rows())
         {
-                Dim=_Wave.Wave().cols()*_Wave.Wave().rows();
+                
         };
 
         void f1tof2(double* f, double* g);

@@ -1,3 +1,8 @@
+//!!!!!!!!the three functions must be coherent!!!!!!!!
+//wave2f, f2wave, f2wave!!!!!!!!!
+
+
+
 #include "QWave.h"
 struct Eigstruct
 {
@@ -8,298 +13,73 @@ struct Eigstruct
 
 
 bool comp(const Eigstruct& a, const Eigstruct& b);
-bool comp(const Eigstruct& a, const Eigstruct& b)
-{
-        return (a.lamda > b.lamda);
-}
 //============================Reshape===================================
-void QWave::Wave2S(MatrixXd& A)const
+void QWave::SMEN2Wave(const MatrixXd& A)
 {
-        A.resize(DSys, DEnv*Dm*Dn);
-        for(int ie=0; ie<DEnv*Dn; ++ie)
-        {
-                for(int is=0; is<DSys; ++is)
-                        {
-                                for(int im=0; im<Dm; ++im)
-                                {
-                                        A(is, im*DEnv*Dn+ie)=_Wave(is*Dm+im, ie);
-                                }
-                        }
-        }
-}
-void QWave::S2Wave(const MatrixXd& A)
-{
-        for(int ie=0; ie<DEnv*Dn; ++ie)
-        {
-                for(int is=0; is<DSys; ++is)
-                        {
-                                for(int im=0; im<Dm; ++im)
-                                {
-                                        _Wave(is*Dm+im, ie)=A(is, im*DEnv*Dn+ie);
-                                }
-                        }
-        }
-}
-void QWave::Wave2M(MatrixXd& A)const
-{
-        A.resize(Dm, DSys*DEnv*Dn);
-        for(int ie=0; ie<DEnv*Dn; ++ie)
-        {
-                for(int is=0; is<DSys; ++is)
-                        {
-                                for(int im=0; im<Dm; ++im)
-                                {
-                                        A(im, is*DEnv*Dn+ie)=_Wave(is*Dm+im, ie);
-                                }
-                        }
-        }
-}
 
-void QWave::M2Wave(const MatrixXd& A)
-{
-        for(int ie=0; ie<DEnv*Dn; ++ie)
-        {
-                for(int is=0; is<DSys; ++is)
-                        {
-                                for(int im=0; im<Dm; ++im)
-                                {
-                                        _Wave(is*Dm+im, ie)=A(im, is*DEnv*Dn+ie);
-                                }
-                        }
-        }
-}
-void QWave::Wave2E(MatrixXd& A)const
-{
-        A.resize(Dm*DSys*Dn, DEnv);
         for(int ie=0; ie<DEnv; ++ie)
         {
                 for(int in=0; in<Dn; ++in)
+                {
+                        for(int is=0; is<DSys; ++is)
                         {
-                                for(int is=0; is<Dm*DSys; ++is)
+                                for(int im=0; im<Dm; ++im)
                                 {
-                                        A(in*DSys*Dm+is, ie)=_Wave(is, ie*Dn+in);
+                                        _Wave.at(im).at(in)(is,ie)=A(is*Dm+im, ie*Dn+in);
                                 }
                         }
+                }
         }
 }
-void QWave::E2Wave(const MatrixXd& A)
+
+void QWave::SMEN(MatrixXd& A)const
 {
+        A=MatrixXd::Zero(DSys*Dm, DEnv*Dn);
         for(int ie=0; ie<DEnv; ++ie)
         {
                 for(int in=0; in<Dn; ++in)
+                {
+                        for(int is=0; is<DSys; ++is)
                         {
-                                for(int is=0; is<Dm*DSys; ++is)
+                                for(int im=0; im<Dm; ++im)
                                 {
-                                        _Wave(is, ie*Dn+in)=A(in*DSys*Dm+is, ie);
+                                        A(is*Dm+im, ie*Dn+in)=_Wave.at(im).at(in)(is,ie);
                                 }
                         }
-        }
-}
-void QWave::Wave2N(MatrixXd& A)const
-{
-        A.resize(Dm*DSys*DEnv, Dn);
-        for(int in=0; in<Dn; ++in)
-        {
-                for(int ie=0; ie<DEnv; ++ie)
-                        {
-                                for(int is=0; is<Dm*DSys; ++is)
-                                {
-                                        A(ie*DSys*Dm+is, in)=_Wave(is, ie*Dn+in);
-                                }
-                        }
-        }
-}
-
-void QWave::N2Wave(const MatrixXd& A)
-{
-        for(int in=0; in<Dn; ++in)
-        {
-                for(int ie=0; ie<DEnv; ++ie)
-                        {
-                                for(int is=0; is<Dm*DSys; ++is)
-                                {
-                                        _Wave(is, ie*Dn+in)=A(ie*DSys*Dm+is, in);
-                                }
-                        }
+                }
         }
 }
 
 
-
-
-
-
-//=================The Sparse parts used OPWave=========================
-/*void QWave::SysOPWave(const MatrixXd& O)
+void QWave::NSME(MatrixXd& A)const
 {
-        MatrixXd temp(MatrixXd::Zero(_Wave.rows(), _Wave.cols()));
-        for(int is=0; is<DSys; ++is)
+        A=MatrixXd::Zero(Dn*DSys, Dm*DEnv);
+        for(int im=0; im<Dm; ++im)
         {
                 for(int ie=0; ie<DEnv; ++ie)
                 {
                         for(int in=0; in<Dn; ++in)
                         {
-                                for(int iss=0; iss<DSys; ++iss)
+                                for(int is=0; is<DSys; ++is)
                                 {
-                                        for(int im=0; im<Dm; ++im)
-                                        {
-                                                temp(is*Dm+im, ie*Dn+in)+=
-                                                O(is, iss)*_Wave(iss*Dm+im, ie*Dn+in);
-                                        }
-                                }
-                        }
-                }
-        }
-        _Wave=temp;
-}*/
-void QWave::SysOPWave(const MatrixXd& O)
-{
-        MatrixXd temp;
-        Wave2S(temp);
-        temp=O*temp;
-        S2Wave(temp);
-}
-
-void QWave::EnvOPWave(const MatrixXd& O)
-{
-        MatrixXd temp;
-        Wave2E(temp);
-        temp=temp*O.transpose();
-        E2Wave(temp);
-}
-void QWave::MOPWave(const SpMat& O)
-{
-        MatrixXd temp;
-        Wave2M(temp);
-        temp=O*temp;
-        M2Wave(temp);
-}
-void QWave::NOPWave(const SpMat& O)
-{
-        MatrixXd temp;
-        Wave2N(temp);
-        temp=temp*O.transpose();
-        N2Wave(temp);
-}
-
-void QWave::Transform()
-{
-        MatrixXd temp(_Wave);
-        for(int ie=0; ie<DEnv; ++ie)
-        {
-                for(int im=0; im<Dm; ++im)
-                {
-                        for(int is=0; is<DSys; ++is)
-                        {
-                                for(int in=0; in<Dn; ++in)
-                                {
-                                        _Wave(in*DSys+is, im*DEnv+ie)
-                                        =temp(is*Dm+im, ie*Dn+in);
+                                        A(in*DSys+is, im*DEnv+ie)=_Wave.at(im).at(in)(is,ie);
                                 }
                         }
                 }
         }
 }
 
-/*void QWave::TransBack()
+
+void QWave::TruncL(MatrixXd& truncU, const int& D)const
 {
-        MatrixXd temp(_Wave);
-        for(int ie=0; ie<DEnv; ++ie)
-        {
-                for(int im=0; im<Dm; ++im)
-                {
-                        for(int is=0; is<DSys; ++is)
-                        {
-                                for(int in=0; in<Dn; ++in)
-                                {
-                                        _Wave(is*Dm+im, ie*Dn+in)
-                                        =temp(in*DSys+is, im*DEnv+ie);
-                                }
-                        }
-                }
-        }
-}*/
+        MatrixXd Wave;
+        SMEN(Wave);
 
-
-
-
-
-
-
-//=================The Dense matrix used OPWave======================
-const MatrixXd& QWave::LOPWave(const MatrixXd& sys)
-{
-        _Wave=sys*_Wave;
-
-        return _Wave;
-}
-
-const MatrixXd& QWave::ROPWave(const MatrixXd& Env)
-{
-        _Wave=_Wave*Env.transpose();
-
-        return _Wave;
-}
-
-
-const MatrixXd& QWave::LROPWave(const MatrixXd& Sys, const MatrixXd& Env)
-{
-        _Wave=Sys*_Wave*Env.transpose();
-        return _Wave;
-}
-//===========================================================================
-
-const vector<double>& QWave::Wave2f(vector<double>& f)const
-{
-        for(int i=0; i<_Wave.rows(); ++i)
-        {
-                for(int j=0; j<_Wave.cols(); ++j)
-                {
-                        f.push_back(_Wave(i,j));
-                }
-        }
-
-        return f;
-}
-
-
-const MatrixXd& QWave::f2Wave(const vector<double>& f)
-{
-        for(int i=0; i<_Wave.rows(); ++i)
-        {
-                for(int j=0; j<_Wave.cols(); ++j)
-                {
-                        _Wave(i, j)=f.at(i*_Wave.cols()+j);
-                }
-        }
-
-        return _Wave;
-}
-
-
-const MatrixXd& QWave::f2Wave(const VectorXd& f)
-{
-        for(int i=0; i<_Wave.rows(); ++i)
-        {
-                for(int j=0; j<_Wave.cols(); ++j)
-                {
-                        _Wave(i, j)=f(i*_Wave.cols()+j);
-                }
-        }
-
-        return _Wave;
-}
-
-
-
-
-const MatrixXd& QWave::TruncL(MatrixXd& truncU, const int& D)const
-{
         vector<Eigstruct> denmat;
 
-        if(_Wave.cols()*_Wave.rows()>16)
+        if(Wave.cols()*Wave.rows()>16)
         {
-                BDCSVD<MatrixXd> svd(_Wave, ComputeFullU);
+                BDCSVD<MatrixXd> svd(Wave, ComputeFullU);
                 for(int i=0; i<svd.singularValues().rows(); ++i)
                 {
                         Eigstruct base;
@@ -310,7 +90,7 @@ const MatrixXd& QWave::TruncL(MatrixXd& truncU, const int& D)const
                 }
         }else
         {
-                JacobiSVD<MatrixXd> svd(_Wave, ComputeFullU);
+                JacobiSVD<MatrixXd> svd(Wave, ComputeFullU);
                 for(int i=0; i<svd.singularValues().rows(); ++i)
                 {
                         Eigstruct base;
@@ -323,56 +103,240 @@ const MatrixXd& QWave::TruncL(MatrixXd& truncU, const int& D)const
 
         sort(denmat.begin(), denmat.end(), comp);
 
-        int nrow(_Wave.rows());
+        int nrow(Wave.rows());
         int ncol(D<denmat.size()?D:denmat.size());
-        truncU=MatrixXd::Zero(nrow, ncol);
+        truncU=(MatrixXd::Zero(nrow, ncol));
 
         for(int i=0; i<ncol; ++i)
         {
                 truncU.col(i)=denmat.at(i).state;
         }
 
-        return truncU;
+
 
 }
-const MatrixXd& QWave::TruncR(MatrixXd& truncV, const int& D)const
+
+
+//===========================================================================
+void QWave::SysOPWave(const MatrixXd& Sys)
 {
-        vector<Eigstruct> denmat;
-
-        if(_Wave.cols()*_Wave.rows()>16)
+        for(int im=0; im<Dm; ++im)
         {
-                BDCSVD<MatrixXd> svd(_Wave, ComputeFullV);
-                for(int i=0; i<svd.singularValues().rows(); ++i)
+                for(int in=0; in<Dn; ++in)
                 {
-                        Eigstruct base;
-                        base.lamda=svd.singularValues()(i);
-                        base.state=svd.matrixV().col(i);
-
-                        denmat.push_back(base);
+                        MatrixXd temp(_Wave.at(im).at(in));
+                        _Wave.at(im).at(in)=Sys*_Wave.at(im).at(in);
                 }
-        }else
-        {
-                JacobiSVD<MatrixXd> svd(_Wave, ComputeFullV);
-                for(int i=0; i<svd.singularValues().rows(); ++i)
-                {
-                        Eigstruct base;
-                        base.lamda=svd.singularValues()(i);
-                        base.state=svd.matrixV().col(i);
+        }
+}
 
-                        denmat.push_back(base);
+void QWave::SysOPWave(const MatrixXd& Sys, const QWave& wave)
+{
+        for(int im=0; im<Dm; ++im)
+        {
+                for(int in=0; in<Dn; ++in)
+                {
+                        _Wave.at(im).at(in)+=Sys*wave.Wave().at(im).at(in);
+                }
+        }
+}
+
+void QWave::EnvOPWave(const MatrixXd& Env, const QWave& wave)
+{
+        for(int im=0; im<Dm; ++im)
+        {
+                for(int in=0; in<Dn; ++in)
+                {
+                        _Wave.at(im).at(in)+=wave.Wave().at(im).at(in)*Env.transpose();
+                }
+        }
+}
+
+void QWave::MOPWave(const SpMat& M, const QWave& wave)
+{
+        for(int in=0; in<Dn; ++in)
+        {
+                for (int k=0; k<M.outerSize(); ++k)
+                for (SparseMatrix<double>::InnerIterator it(M,k); it; ++it)
+                {
+                
+                       _Wave.at(it.row()).at(in)+=it.value()*wave.Wave().at(it.col()).at(in);
+                }
+                
+                
+        }
+}
+
+const QWave QWave::MOPWave(const SpMat& M, const double& j)const
+{
+        QWave temp(DSys, Dm, Dn, DEnv);
+        for(int in=0; in<Dn; ++in)
+        {
+                for (int k=0; k<M.outerSize(); ++k)
+                for (SparseMatrix<double>::InnerIterator it(M,k); it; ++it)
+                {
+                
+                       temp._Wave.at(it.row()).at(in)+=it.value()*_Wave.at(it.col()).at(in)*j;
+                }
+                
+                
+        }
+        return temp;
+
+}
+
+
+void QWave::NOPWave(const SpMat& N, const QWave& wave)
+{       
+        for(int im=0; im<Dm; ++im)
+        {
+                for (int k=0; k<N.outerSize(); ++k)
+                for (SparseMatrix<double>::InnerIterator it(N,k); it; ++it)
+                {
+                
+                       _Wave.at(im).at(it.row())+=it.value()*wave.Wave().at(im).at(it.col());
+                }
+                
+                
+        }
+}
+
+const QWave QWave::NOPWave(const SpMat& N, const double& j)const
+{
+        QWave temp(DSys, Dm, Dn, DEnv);
+
+        for (int k=0; k<N.outerSize(); ++k)
+        for (SparseMatrix<double>::InnerIterator it(N,k); it; ++it)
+        {
+                for(int im=0; im<Dm; ++im)
+                {
+                       temp._Wave.at(im).at(it.row())=it.value()*Wave().at(im).at(it.col())*j;
+                }
+                
+                
+        }
+        return temp;
+
+}
+
+
+void QWave::add(const QWave& Wave)
+{
+        for(int im=0; im<Dm; ++im)
+        {
+                for(int in=0; in<Dn; ++in)
+                {
+                        _Wave.at(im).at(in)+=Wave._Wave.at(im).at(in);
+                }
+        }
+}
+
+//===========================================================================
+
+void QWave::Wave2f(vector<double>& f)const
+{
+        for(int is=0; is<DSys; ++is)
+        {
+                for(int im=0; im<Dm; ++im)
+                {
+                        for(int ie=0; ie<DEnv; ++ie)
+                        {
+                                for(int in=0; in<Dn; ++in)
+                                {
+                                        f.push_back((_Wave.at(im).at(in))(is, ie));
+                                }
+                        }
+                }
+        }
+}
+
+
+void QWave::f2Wave(const vector<double>& f)
+{
+        int i(0);//for(int i=0; i<f.size(); ++i)cout<<f.at(i)<<endl;
+        for(int is=0; is<DSys; ++is)
+        {
+                //vector<MatrixXd> tempv;
+                for(int im=0; im<Dm; ++im)
+                {
+                        
+                        for(int ie=0; ie<DEnv; ++ie)
+                        {
+                                for(int in=0; in<Dn; ++in)
+                                {
+                                        _Wave.at(im).at(in)(is, ie)=f.at(i++);
+                                }
+                        }
+                        
+                }
+                
+
+        }
+        //Show();int nn; cin>>nn;
+}
+
+
+void QWave::f2Wave(const VectorXd& f)
+{
+        int i(0);
+        for(int is=0; is<DSys; ++is)
+        {
+                
+                for(int im=0; im<Dm; ++im)
+                {
+                        
+                        for(int ie=0; ie<DEnv; ++ie)
+                        {
+                                for(int in=0; in<Dn; ++in)
+                                {
+                                        _Wave.at(im).at(in)(is, ie)=f(i++);
+                                }
+                        }
+                       
+                }
+               
+
+        }
+}
+
+
+void QWave::Show()const
+{
+        for(int im=0; im<Dm; ++im)
+        {
+                for(int in=0; in<Dn; ++in)
+                {
+                        cout<<"<"<<im<<", "<<in<<">:"<<endl<<_Wave.at(im).at(in)<<endl;
+                }
+        }
+}
+
+
+
+void QWave::Norm()
+{
+        double sum(0);
+        for(int im=0; im<Dm; ++im)
+        {
+                for(int in=0; in<Dn; ++in)
+                {
+                        for(int is=0; is<DSys; ++is)
+                        {
+                                for(int ie=0; ie<DEnv; ++ie)
+                                    sum+=pow(_Wave.at(im).at(in)(is, ie),2);
+                        }
                 }
         }
 
-        sort(denmat.begin(), denmat.end(), comp);
-
-        int nrow(_Wave.cols());
-        int ncol(D<denmat.size()?D:denmat.size());
-        truncV=MatrixXd::Zero(nrow, ncol);
-
-        for(int i=0; i<ncol; ++i)
+        for(int im=0; im<Dm; ++im)
         {
-                truncV.col(i)=denmat.at(i).state;
+                for(int in=0; in<Dn; ++in)
+                {
+                        for(int is=0; is<DSys; ++is)
+                        {
+                                for(int ie=0; ie<DEnv; ++ie)
+                                    _Wave.at(im).at(in)(is, ie)/=sqrt(sum);
+                        }
+                }
         }
-
-        return truncV;
 }
