@@ -15,9 +15,11 @@ private:
         SingleSub m;
         SingleSub n;
 
+        QWave _Wave;
+        
+
         
 public:
-        QWave _Wave;
 
 
         int rows() { return Dim; };

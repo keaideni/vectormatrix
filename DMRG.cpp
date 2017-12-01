@@ -60,7 +60,7 @@ Env(para, para.LatticeSize()),
 m(para, 2),
 n(para, para.LatticeSize()-1),
 SaveAll("./result/SaveAll"),
-_FEnergy(0),
+_FEnergy(100000),
 _Entropy(0)
 {
         SaveAll.precision(15);
@@ -117,8 +117,8 @@ void DMRG::BuildUp(Parameter& para, int& OS, int& OE)
 
 
                 cout.precision(15);
-                cout<<"OS="<<setw(10)<<OS<<"; OE="<<setw(10)<<OE<<"; The energy="
-                <<setw(18)<<para.Energy<<endl;
+                //cout<<"OS="<<setw(10)<<OS<<"; OE="<<setw(10)<<OE<<"; The energy="
+                //<<setw(18)<<para.Energy<<endl;
                 SaveAll<<"OS="<<setw(10)<<OS<<"; OE="<<setw(10)<<OE<<"; The energy="
                 <<setw(18)<<para.Energy<<endl;
                 //int nn; cin>>nn;
@@ -147,7 +147,10 @@ void DMRG::BuildUp(Parameter& para, int& OS, int& OE)
                 OS+=1;
                 OE-=1;
 
-                if(OE-OS==1)Supp.wave.SMEN(IniWave);
+                if(OE-OS==1)
+                {
+                        Supp.wave.SMEN(IniWave);
+                }
 
         }
 

@@ -25,7 +25,7 @@ obj=main.o Sub.o SingleSub.o QWave.o Super.o DMRG.o
 main:$(obj)
 	$(CCCOM) -o main $(obj)  $(LIBSPECTRA)
 main.o:main.cpp  DMRG.h Calcu.h
-	$(CCCOM) -c main.cpp $(LIBSPECTRA)
+	$(CCCOM) -c main.cpp -O2 $(LIBSPECTRA)
 Sub.o:Sub.cpp Sub.h Parameter.h
 	$(CCCOM) -c Sub.cpp -O2 $(LIBSPECTRA)
 SingleSub.o:SingleSub.cpp SingleSub.h Parameter.h

@@ -1,5 +1,5 @@
 #include "DMRG.h"
-#include "test.h"
+//#include "test.h"
 #include "Calcu.h"
 
 
@@ -10,6 +10,11 @@ int main(void)
         Parameter para;
         Sub::nmax=para.nmax();
         DMRG haha(para);
-        
-        cout<<haha.FEnergy()<<endl<<haha.Entropy()<<endl<<ParticleNo(para)<<endl;
+        ofstream outfile("./result/Result");
+        outfile.precision(20);
+        outfile<<"gr= "<<para.gr()<<" ,gcr= "<<para.gcr()<<" ,Jr= "<<para.Jr()
+        <<" ,Jcr= "<<para.Jcr()<<" ,Energy= "<<haha.FEnergy()<<" ,Entropy= "
+        <<haha.Entropy()<<endl<<" ,AParticleNo= "<<ParticleNo(para)
+        <<" ,<A>= "<<OrderParameter(para)<<endl;
+        Correlation(para);
 }

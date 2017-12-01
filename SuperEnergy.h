@@ -29,7 +29,7 @@ public:
                 {
                         wave.f2Wave(eigs.eigenvectors(1));
                         para.Energy = eigs.eigenvalues()(0);
-                        std::cout << eigs.num_iterations() << std::endl;
+                        //std::cout << eigs.num_iterations() << std::endl;
                 }
 
                 
@@ -69,7 +69,7 @@ public:
                 {
                         wave.f2Wave(eigs.eigenvectors(1));
                         para.Energy = eigs.eigenvalues()(0);
-                        std::cout << eigs.num_iterations() << std::endl;
+                        //std::cout << eigs.num_iterations() << std::endl;
                 }
 
                 
