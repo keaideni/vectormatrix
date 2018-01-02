@@ -221,7 +221,11 @@ MatrixXd Kron(const MatrixXd& a, const MatrixXd& b)
         return ab;
 }
 
+double secondcorrelation(const Parameter& para);
+double secondcorrelation(const Parameter& para)
+{
 
+}
 
 
 #endif // CALCU_H

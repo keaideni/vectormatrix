@@ -13,9 +13,7 @@ CCCOM=g++ -std=c++11 -g
 
 
 #LIBFLAGS = -larmadillo
-LIBSPECTRA = -I/media/xuejian/WORK/spectra/spectra-0.5.0/include/ -I/media/xuejian/WORK/spectra/eigen-eigen-67e894c6cd8f/
-
-
+LIBSPECTRA = -I/home/keaideni/WORK/Spectral/spectra/include/ -I/home/keaideni/WORK/Spectral/eigen-eigen-5a0156e40feb/
 
 
 
