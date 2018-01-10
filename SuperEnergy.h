@@ -24,7 +24,7 @@ public:
                 if(sup.Dim < 6)a=4;
                 SymEigsSolver<double, SMALLEST_ALGE, Super> eigs(&sup, 1, a);
                 eigs.init();
-                eigs.compute();
+                eigs.compute(10000);
                 if (eigs.info() == SUCCESSFUL)
                 {
                         wave.f2Wave(eigs.eigenvectors(1));
@@ -64,7 +64,7 @@ public:
                 if(sup.Dim < 6)a=4;
                 SymEigsSolver<double, SMALLEST_ALGE, Super> eigs(&sup, 1, a);
                 eigs.init(pt);
-                eigs.compute();
+                eigs.compute(10000);
                 if (eigs.info() == SUCCESSFUL)
                 {
                         wave.f2Wave(eigs.eigenvectors(1));
@@ -88,7 +88,7 @@ public:
                 if(sup.Dim < 6)a=4;
                 SymEigsSolver<double, SMALLEST_ALGE, Super> eigs(&sup, 1, a);
                 eigs.init(pt);
-                eigs.compute();
+                eigs.compute(10000);
                 if (eigs.info() == SUCCESSFUL)
                 {
                         wave.f2Wave(eigs.eigenvectors(1));

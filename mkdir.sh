@@ -6,9 +6,9 @@ mkdir trunc
 cat>Parameter<<EOF
 nmax= 6
 D= 20
-LatticeSize= 20
-gr= 2
+LatticeSize= 18
+gr= 4
 gcr= 0
-Jr= 0
+Jr= 0.0000
 Jcr= 0
 EOF

@@ -15,6 +15,6 @@ int main(void)
         outfile<<"gr= "<<para.gr()<<" ,gcr= "<<para.gcr()<<" ,Jr= "<<para.Jr()
         <<" ,Jcr= "<<para.Jcr()<<" ,Energy= "<<haha.FEnergy()<<" ,Entropy= "
         <<haha.Entropy()<<endl<<" ,AParticleNo= "<<ParticleNo(para)
-        <<" ,<A>= "<<OrderParameter(para)<<endl;
+        <<" ,<A>= "<<OrderParameter(para)<<" ,SecondCorrelation= "<<secondcorrelation(para)<<endl;
         Correlation(para);
 }

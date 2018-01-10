@@ -224,6 +224,15 @@ MatrixXd Kron(const MatrixXd& a, const MatrixXd& b)
 double secondcorrelation(const Parameter& para);
 double secondcorrelation(const Parameter& para)
 {
+	Sub a,m(para,0);
+	a.Read(para.LatticeSize()/2-1);
+	MatrixXd wave;
+	ReadTruncM(wave, 10000);
+	MatrixXd Adag(Kron(a.SysEye(),m.SysAdag())), A(Kron(a.SysEye(),m.SysA()));
+	double fenzi((wave.transpose()*Adag*Adag*A*A*wave).trace());
+	double fenmu(pow((wave.transpose()*Adag*A*wave).trace(),2));
+
+	return fenzi/fenmu;
 
 }
 
