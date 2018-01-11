@@ -233,7 +233,7 @@ void DMRG::CalcuEnergy(Parameter& para, int& OS, int& OE, const int& dir, const 
         //time(&end);
         //cout<<"The process of getting eigenstate takes "<<(end-start)<<"s."<<endl;
         //==============to save the final wave=======================
-        if((OS==(para.LatticeSize()/2)&dir==1)|(OE==(para.LatticeSize()/2+1)&dir==-1))
+        if((OS==(para.LatticeSize()/2-1)&dir==1)|(OE==(para.LatticeSize()/2+2)&dir==-1))
         {
                 MatrixXd finalwave;
                 Supp.wave.SMEN(finalwave);

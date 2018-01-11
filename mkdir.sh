@@ -5,10 +5,10 @@ mkdir result
 mkdir trunc
 cat>Parameter<<EOF
 nmax= 6
-D= 20
-LatticeSize= 18
-gr= 4
+D= 21
+LatticeSize= 20
+gr= 1.25
 gcr= 0
-Jr= 0.0000
+Jr= 0.005
 Jcr= 0
 EOF

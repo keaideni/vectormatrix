@@ -13,7 +13,7 @@ CCCOM=g++ -std=c++11 -g
 
 
 #LIBFLAGS = -larmadillo
-LIBSPECTRA = -I/home/keaideni/WORK/Spectral/spectra/include/ -I/home/keaideni/WORK/Spectral/eigen-eigen-5a0156e40feb/
+LIBSPECTRA = -I/home/keaideni/WORK/Spectral/spectra/include/ -I/home/keaideni/WORK/Spectral/eigen-git-mirror/
 
 
 
