@@ -190,7 +190,7 @@ void Correlation(const Parameter& para)
         }
         Sub Sys;
         Sys.Read(para.LatticeSize()/2+2);
-        MatrixXd A(Kron(Sys.SysEye(), m.SysA()));
+        MatrixXd A(Kron(Sys.SysA1(), m.SysEye()));
         Corr.push_back((wave.adjoint()*Adag1*wave*A.transpose()).trace());
 
         ofstream outfile("./result/Correlation");
