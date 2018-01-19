@@ -14,11 +14,16 @@ int main(void)
         outfile.precision(20);
         outfile<<"gr= "<<para.gr()<<" ,gcr= "<<para.gcr()<<" ,Jr= "<<para.Jr()
         <<" ,Jcr= "<<para.Jcr()<<" ,Energy= "<<haha.FEnergy()<<" ,Entropy= "
-        <<haha.Entropy()<<endl<<" ,AParticleNo= "<<ParticleNo(para)
-        <<" ,<A>= "<<OrderParameter(para)<<" ,SecondCorrelation= "<<secondcorrelation(para)<<endl;
-		/*std::cout<<"gr= "<<para.gr()<<" ,gcr= "<<para.gcr()<<" ,Jr= "<<para.Jr()
+        <<haha.Entropy()<<endl<<" ,AParticleNo= "<<ParticleNo(para)<<" ,SigmaParticleNo= "
+	<<SigmaParticleNo(para)<<" ,<A>= "<<OrderParameter(para)
+	<<" ,SecondCorrelation= "<<secondcorrelation(para)
+	<<" ,Parity= "<<Parity(para)<<endl;
+	/*std::cout<<"gr= "<<para.gr()<<" ,gcr= "<<para.gcr()<<" ,Jr= "<<para.Jr()
         <<" ,Jcr= "<<para.Jcr()<<" ,AParticleNo= "<<ParticleNo(para)
-        <<" ,<A>= "<<OrderParameter(para)<<" ,SecondCorrelation= "<<secondcorrelation(para)<<endl;*/
-        
+	<<" ,SigmaParticleNo= "<<SigmaParticleNo(para)<<" ,<A>= "<<OrderParameter(para)
+	<<" ,SecondCorrelation= "<<secondcorrelation(para)
+	<<" ,Parity= "<<Parity(para)<<endl;*/
+
         Correlation(para);
+	SigmaCorrelation(para);
 }
