@@ -127,7 +127,7 @@ double SigmaParticleNo(const Parameter& para)
 				Kron(SigmaParticleMat.at(para.LatticeSize()/2+j), m.SysEye());
 			if(i==para.LatticeSize()/2)continue;
 			MatrixXd tempTrunc;
-			ReadTruncM(tempTrunc, i);
+			ReadTruncM(tempTrunc, para.LatticeSize()-i+1);
 			SigmaParticleMat.at(para.LatticeSize()/2+j)=
 			tempTrunc.adjoint()*SigmaParticleMat.at(para.LatticeSize()/2+j)*tempTrunc;
 
