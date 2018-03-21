@@ -7,8 +7,8 @@ cat>Parameter<<EOF
 nmax= 6
 D= 20
 LatticeSize= 10
-gr= 2
-gcr= 0
-Jr= 0.00
+gr= 1
+gcr= 1
+Jr= 0.08
 Jcr= 0
 EOF

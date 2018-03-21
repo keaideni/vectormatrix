@@ -258,7 +258,7 @@ void DMRG::CalcuEnergy(Parameter& para, int& OS, int& OE, const int& dir, const 
                         Sub SysNew(para, Sys, m, OS+dir);
                         
                         Supp.wave.SMEN(wave);
-                        MatrixXd matrixT=(DenTruncL(wave, para.D()));
+                        MatrixXd matrixT=(DenTruncL(wave, para.D(), _Entropy));
                         SysNew.Trunc(matrixT);
                         SysNew.Save();
                         SaveTruncM(matrixT, SysNew.Orbital());
@@ -269,7 +269,7 @@ void DMRG::CalcuEnergy(Parameter& para, int& OS, int& OE, const int& dir, const 
                         Sub SysNew(para, Env, n, OE+dir);
                         
                         Supp.wave.SMEN(wave);
-                        MatrixXd matrixT=(DenTruncR(wave, para.D()));
+                        MatrixXd matrixT=(DenTruncR(wave, para.D(), _Entropy));
                         SysNew.Trunc(matrixT);
                         SysNew.Save();
                         SaveTruncM(matrixT, SysNew.Orbital());
@@ -284,7 +284,7 @@ void DMRG::CalcuEnergy(Parameter& para, int& OS, int& OE, const int& dir, const 
                         Sub SysNew(para, n, Sys, OS+dir);
                         
                         Supp.wave.NSME(wave);
-                        MatrixXd matrixT=(DenTruncL(wave, para.D()));
+                        MatrixXd matrixT=(DenTruncL(wave, para.D(), _Entropy));
                         //cout<<matrixT.rows()<<"x"<<matrixT.cols()<<endl;
                         //int nn; cin>>nn;
                         SysNew.Trunc(matrixT);
@@ -297,7 +297,7 @@ void DMRG::CalcuEnergy(Parameter& para, int& OS, int& OE, const int& dir, const 
                         Sub SysNew(para, m, Env, OE+dir);
                         
                         Supp.wave.NSME(wave);
-                        MatrixXd matrixT=(DenTruncR(wave, para.D()));
+                        MatrixXd matrixT=(DenTruncR(wave, para.D(), _Entropy));
                         SysNew.Trunc(matrixT);
                         SysNew.Save();
                         SaveTruncM(matrixT, SysNew.Orbital());
