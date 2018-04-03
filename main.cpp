@@ -13,7 +13,7 @@ int main(void)
         ofstream outfile("./result/Result");
         outfile.precision(20);
         outfile<<"gr= "<<para.gr()<<" ,gcr= "<<para.gcr()<<" ,Jr= "<<para.Jr()
-        <<" ,Jcr= "<<para.Jcr()<<" ,Energy= "<<haha.FEnergy()<<" ,Entropy= "
+        <<" ,Jcr= "<<para.Jcr()<<" ,Energy= "<<haha.FEnergy()<<" ,ExcitedEnergy= "<<haha.Excited()<<" ,Entropy= "
         <<haha.Entropy()<<endl<<" ,AParticleNo= "<<ParticleNo(para)<<" ,SigmaParticleNo= "
 	<<SigmaParticleNo(para)<<" ,<A>= "<<OrderParameter(para)
 	<<" ,SecondCorrelation= "<<secondcorrelation(para)

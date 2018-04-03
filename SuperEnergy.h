@@ -12,8 +12,14 @@ using namespace Spectra;
 #define SUPERENERGY_H
 class SuperEnergy
 {
+private:
+	double _excited;
 public:
-        QWave wave;
+        QWave wave; 
+	const double excited()const{
+		return _excited;
+	};
+
 
         //SuperEnergy(){};
         SuperEnergy(Parameter&para,Super& sup):
@@ -22,13 +28,15 @@ public:
                 
                 int a(6);
                 if(sup.Dim < 6)a=4;
-                SymEigsSolver<double, SMALLEST_ALGE, Super> eigs(&sup, 1, a);
+                SymEigsSolver<double, SMALLEST_ALGE, Super> eigs(&sup, 2, a);
                 eigs.init();
                 eigs.compute(10000);
                 if (eigs.info() == SUCCESSFUL)
                 {
                         wave.f2Wave(eigs.eigenvectors(1));
-                        para.Energy = eigs.eigenvalues()(0);
+                        para.Energy = eigs.eigenvalues()(0)<eigs.eigenvalues()(1)?eigs.eigenvalues()(0):eigs.eigenvalues()(1);
+                        _excited= eigs.eigenvalues()(0)>eigs.eigenvalues()(1)?eigs.eigenvalues()(0):eigs.eigenvalues()(1);
+		
                         //std::cout << eigs.num_iterations() << std::endl;
                 }
 
@@ -62,14 +70,16 @@ public:
                 
                 int a(6);
                 if(sup.Dim < 6)a=4;
-                SymEigsSolver<double, SMALLEST_ALGE, Super> eigs(&sup, 1, a);
+                SymEigsSolver<double, SMALLEST_ALGE, Super> eigs(&sup, 2, a);
                 eigs.init(pt);
                 eigs.compute(10000);
                 if (eigs.info() == SUCCESSFUL)
                 {
                         wave.f2Wave(eigs.eigenvectors(1));
-                        para.Energy = eigs.eigenvalues()(0);
+                        //para.Energy = eigs.eigenvalues()(0);
                         //std::cout << eigs.num_iterations() << std::endl;
+                        para.Energy = eigs.eigenvalues()(0)<eigs.eigenvalues()(1)?eigs.eigenvalues()(0):eigs.eigenvalues()(1);
+                        _excited= eigs.eigenvalues()(0)>eigs.eigenvalues()(1)?eigs.eigenvalues()(0):eigs.eigenvalues()(1);
                 }
 
                 
@@ -86,14 +96,16 @@ public:
                 
                 int a(6);
                 if(sup.Dim < 6)a=4;
-                SymEigsSolver<double, SMALLEST_ALGE, Super> eigs(&sup, 1, a);
+                SymEigsSolver<double, SMALLEST_ALGE, Super> eigs(&sup, 2, a);
                 eigs.init(pt);
                 eigs.compute(10000);
                 if (eigs.info() == SUCCESSFUL)
                 {
                         wave.f2Wave(eigs.eigenvectors(1));
-                        para.Energy = eigs.eigenvalues()(0);
+                        //para.Energy = eigs.eigenvalues()(0);
                         //std::cout << eigs.num_iterations() << std::endl;
+                        para.Energy = eigs.eigenvalues()(0)<eigs.eigenvalues()(1)?eigs.eigenvalues()(0):eigs.eigenvalues()(1);
+                        _excited= eigs.eigenvalues()(0)>eigs.eigenvalues()(1)?eigs.eigenvalues()(0):eigs.eigenvalues()(1);
                 }
 
                 

@@ -15,9 +15,11 @@ class DMRG
         ofstream SaveAll;
         double _FEnergy;
         double _Entropy;
+	double _Excited;
 public:
         const double& FEnergy()const{return _FEnergy;};
         const double& Entropy()const{return _Entropy;};
+        const double& Excited()const{return _Excited;};
         
 
 
