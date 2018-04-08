@@ -33,7 +33,14 @@ public:
                 eigs.compute(10000);
                 if (eigs.info() == SUCCESSFUL)
                 {
-                        wave.f2Wave(eigs.eigenvectors(1));
+			if(eigs.eigenvalues()(0)<eigs.eigenvalues()(1))
+			{
+
+				wave.f2Wave(eigs.eigenvectors(2).col(0));
+			}else
+			{
+				wave.f2Wave(eigs.eigenvectors(2).col(1));
+			}
                         para.Energy = eigs.eigenvalues()(0)<eigs.eigenvalues()(1)?eigs.eigenvalues()(0):eigs.eigenvalues()(1);
                         _excited= eigs.eigenvalues()(0)>eigs.eigenvalues()(1)?eigs.eigenvalues()(0):eigs.eigenvalues()(1);
 		
@@ -75,6 +82,15 @@ public:
                 eigs.compute(10000);
                 if (eigs.info() == SUCCESSFUL)
                 {
+			if(eigs.eigenvalues()(0)<eigs.eigenvalues()(1))
+			{
+
+				wave.f2Wave(eigs.eigenvectors(2).col(0));
+			}else
+			{
+				wave.f2Wave(eigs.eigenvectors(2).col(1));
+			}
+
                         wave.f2Wave(eigs.eigenvectors(1));
                         //para.Energy = eigs.eigenvalues()(0);
                         //std::cout << eigs.num_iterations() << std::endl;
@@ -101,6 +117,14 @@ public:
                 eigs.compute(10000);
                 if (eigs.info() == SUCCESSFUL)
                 {
+			if(eigs.eigenvalues()(0)<eigs.eigenvalues()(1))
+			{
+
+				wave.f2Wave(eigs.eigenvectors(2).col(0));
+			}else
+			{
+				wave.f2Wave(eigs.eigenvectors(2).col(1));
+			}
                         wave.f2Wave(eigs.eigenvectors(1));
                         //para.Energy = eigs.eigenvalues()(0);
                         //std::cout << eigs.num_iterations() << std::endl;
