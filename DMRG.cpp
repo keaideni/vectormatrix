@@ -231,7 +231,7 @@ void DMRG::CalcuEnergy(Parameter& para, int& OS, int& OE, const int& dir, const 
         //time(&start);
         SuperEnergy Supp(para, Sup, IniWave);
 
-	_Excited=Supp.excited();
+	//_Excited=Supp.excited();
         //time(&end);
         //cout<<"The process of getting eigenstate takes "<<(end-start)<<"s."<<endl;
         //==============to save the final wave=======================
@@ -240,6 +240,7 @@ void DMRG::CalcuEnergy(Parameter& para, int& OS, int& OE, const int& dir, const 
                 MatrixXd finalwave;
                 Supp.wave.SMEN(finalwave);
                 SaveTruncM(finalwave, 10000);//The file "/Trunc/10000" is the final wave.
+		SuperEnergy Suppp(para, Sup, IniWave, _Excited);
         }
 
 
